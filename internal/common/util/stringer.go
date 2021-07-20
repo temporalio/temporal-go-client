@@ -69,7 +69,9 @@ func valueToString(v reflect.Value) string {
 	case reflect.Ptr:
 		return valueToString(v.Elem())
 	case reflect.Struct:
-		return anyToString(v.Interface())
+		if v.CanInterface() {
+			anyToString(v.Interface())
+		}
 	case reflect.Invalid:
 		return ""
 	case reflect.Slice:
@@ -78,8 +80,12 @@ func valueToString(v reflect.Value) string {
 		}
 		return fmt.Sprintf("[len=%d]", v.Len())
 	default:
-		return fmt.Sprint(v.Interface())
+		if v.CanInterface() {
+			return fmt.Sprint(v.Interface())
+		}
 	}
+
+	return ""
 }
 
 // HistoryEventToString convert HistoryEvent to string
